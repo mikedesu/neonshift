@@ -1,16 +1,21 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
+#define BASE_W 70
+#define BASE_H 20
+#define BASE_FPS 40
+
 struct	curs{
 	int	i;
 	char	c;
-	int	s;
+	int	fps;
 };
 
 struct	ptng{
 	short	w;
 	short	h;
-	int	*buf;
+	int	size;
+	short	*buf;
 };
 
 #endif
