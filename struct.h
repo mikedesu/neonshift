@@ -3,7 +3,7 @@
 
 #define BASE_W 70
 #define BASE_H 20
-#define BASE_FPS 40
+#define BASE_FPS 50
 
 struct	curs{
 	int	i;
