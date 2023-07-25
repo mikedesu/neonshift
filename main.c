@@ -21,6 +21,8 @@ FILE		*file;
 //
 int		refresh_rate;
 char		c, f, color, mode;
+//
+char	z = 'z';
 
 curs.i = 0; curs.c = '.';
 curs.fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/curs.fps;
@@ -35,12 +37,13 @@ refresh(); win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
 wui = newwin(20, 15, 4, 9+ptng.w+5);
-wprintw(wui, "modes\n");
+wprintw(wui, "MODES\n");
 wattron(wui, COLOR_PAIR(color));
 wprintw(wui, "\nc c c\n");
 wprintw(wui, "c c c\n\n");
 wattroff(wui, COLOR_PAIR(color));
 wprintw(wui, "normal\n");
+wprintw(wui, "band\n");
 wrefresh(wui);
 
 wattron(win, COLOR_PAIR(color));
@@ -61,14 +64,28 @@ case 's': file = fopen("painting", "w");
 		default: break;}
 		if (i && !((i+1)%ptng.w)) fputc('\n', file);}
 	fclose(file); break;
-case 'z': if (f == 'z') f = 1; else f = 'z'; break;
+case 'z': if (f == 'z') f = 1;
+	else if (f == 'm') {
+if (mode == 'n')	
+	mode_n_update(&z, win, wui, &ptng, &curs, &color);
+else if (mode == 'r')
+	mode_r_update(&z, win, wui, &ptng, &curs, &color);
+	}
+		 else f = 'z'; break;
 
 case 'c': if (color == 2) color = 1; else color = 2;
 	change_color(&color, win, wui); f = 1; break;
-case 'n': if (mode == 'n') mode = 'r'; else mode = 'n'; break;
+case 'n': if (mode == 'n'){ mode = 'r';
+		mvwprintw(wui, 5, 0, "reversed");}
+	else{ mode = 'n'; mvwprintw(wui, 5, 0, "normal  ");}
+	wrefresh(wui); break;
+case 'm': if (f == 'm'){ f = 1;
+		mvwprintw(wui, 6, 0, "band");}
+	else{ f = 'm'; mvwprintw(wui, 6, 0, "spot");}
+	wrefresh(wui); break;
 default: break;}}
 
-else {
+else{
 if (mode == 'n')	
 	mode_n_update(&f, win, wui, &ptng, &curs, &color);
 else if (mode == 'r')

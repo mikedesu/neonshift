@@ -37,7 +37,6 @@ int	change_color(char *color, WINDOW *win, WINDOW *wui){
 	wattron(win, COLOR_PAIR(*color));
 	wattron(wui, COLOR_PAIR(*color));
 	mvwprintw(wui, 2, 0, "c c c\n");
-	wprintw(wui, "c c c");
+	wprintw(wui, "c c c"); wrefresh(wui);
 	wattroff(wui, COLOR_PAIR(*color));
-	wrefresh(wui);
 return 0;}
