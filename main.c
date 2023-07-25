@@ -35,8 +35,12 @@ refresh(); win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
 wui = newwin(20, 15, 4, 9+ptng.w+5);
-wprintw(wui, "modes\n\n");
-wprintw(wui, "normal\n\n");
+wprintw(wui, "modes\n");
+wattron(wui, COLOR_PAIR(color));
+wprintw(wui, "\nc c c\n");
+wprintw(wui, "c c c\n\n");
+wattroff(wui, COLOR_PAIR(color));
+wprintw(wui, "normal\n");
 wrefresh(wui);
 
 wattron(win, COLOR_PAIR(color));
@@ -59,14 +63,16 @@ case 's': file = fopen("painting", "w");
 	fclose(file); break;
 case 'z': if (f == 'z') f = 1; else f = 'z'; break;
 
+case 'c': if (color == 2) color = 1; else color = 2;
+	change_color(&color, win, wui); f = 1; break;
 case 'n': if (mode == 'n') mode = 'r'; else mode = 'n'; break;
 default: break;}}
 
 else {
 if (mode == 'n')	
-	mode_n_update(&f, win, &ptng, &curs, &color);
+	mode_n_update(&f, win, wui, &ptng, &curs, &color);
 else if (mode == 'r')
-	mode_r_update(&f, win, &ptng, &curs, &color);
+	mode_r_update(&f, win, wui, &ptng, &curs, &color);
 }
 wrefresh(win);
 
