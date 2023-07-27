@@ -28,7 +28,6 @@ curs.i = 0; curs.c = '.';
 curs.fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/curs.fps;
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
 ptng.buf = (short *)malloc(ptng.size*sizeof(short));
-for (int i=0; i<ptng.size; i++) ptng.buf[i] = 0;
 f = 1; color = 2; mode = 'n';
 
 init_pair(1, 10, 0); //green foreground
@@ -46,7 +45,27 @@ wprintw(wui, "normal\n");
 wprintw(wui, "band\n");
 wrefresh(wui);
 
-wattron(win, COLOR_PAIR(color));
+file = fopen("painting", "r");
+if (file) {
+while ((c=fgetc(file)) != EOF){
+	c = fgetc(file);
+	switch(c){ case '9': ptng.buf[curs.i] = 0;
+		wattron(win, COLOR_PAIR(1));
+		waddch(win, '0'); break;
+		case '1': ptng.buf[curs.i] = 1;
+		wattron(win, COLOR_PAIR(2));
+		waddch(win, '1'); break;
+		defautl: break;} curs.i++;
+	fgetc(file); fgetc(file); fgetc(file);
+	if (curs.i!=ptng.size-1 && !(curs.i%ptng.w)){
+		fgetc(file);}}
+	fclose(file); curs.i = 0;
+}
+else for (int i=0; i<ptng.size; i++) ptng.buf[i] = 0;
+
+
+
+wrefresh(win); wattron(win, COLOR_PAIR(color));
 clk_start = clock();		 while (f){
 
 if ((c=getch()) != ERR){ switch(c){
@@ -62,7 +81,7 @@ case 's': file = fopen("painting", "w");
 			fprintf(file, "1,9 ");
 			break;
 		default: break;}
-		if (i && !((i+1)%ptng.w)) fputc('\n', file);}
+		if (i && !(i%ptng.w)) fputc('\n', file);}
 	fclose(file); break;
 case 'z': if (f == 'z') f = 1;
 	else if (f == 'm') {
