@@ -20,7 +20,7 @@ clock_t		clk_start, clk;
 FILE		*file;
 //
 int		refresh_rate;
-char		c, f, color, mode;
+char		c, f, color, mode, xmode;
 //
 char	z = 'z';
 
@@ -28,7 +28,7 @@ curs.i = 0; curs.c = '.';
 curs.fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/curs.fps;
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
 ptng.buf = (short *)malloc(ptng.size*sizeof(short));
-f = 1; color = 2; mode = 'n';
+f = 1; color = 2; mode = 'n'; xmode = 0;
 
 init_pair(1, 10, 0); //green foreground
 init_pair(2, 0, 10); //green background
@@ -43,6 +43,7 @@ wprintw(wui, "c c c\n\n");
 wattroff(wui, COLOR_PAIR(color));
 wprintw(wui, "normal\n");
 wprintw(wui, "band\n");
+wprintw(wui, "\noff :invert\n");
 wrefresh(wui);
 
 if ((file = fopen("painting", "r"))) {
@@ -56,8 +57,7 @@ while ((c=fgetc(file)) != EOF){
 		waddch(win, ' '); break;
 		defautl: break;} curs.i++;
 	fgetc(file); fgetc(file); fgetc(file);
-	if (curs.i!=ptng.size-1 && !(curs.i%ptng.w))
-		fgetc(file);}
+	if (curs.i!=ptng.size-1 && !(curs.i%ptng.w)) fgetc(file);}
 	fclose(file); curs.i = 0;}
 else for (int i=0; i<ptng.size; i++) ptng.buf[i] = 0;
 
@@ -98,10 +98,16 @@ case 'm': if (f == 'm'){ f = 1;
 		mvwprintw(wui, 6, 0, "band");}
 	else{ f = 'm'; mvwprintw(wui, 6, 0, "spot");}
 	wrefresh(wui); break;
+case ',': if (xmode != ','){ xmode = ',';
+		mvwprintw(wui, 8, 0, "on ");}
+	  else{ xmode = 0; mvwprintw(wui, 8, 0, "off");}
+	wrefresh(wui); break;
 default: break;}}
 
 else{
-if (mode == 'n')	
+if (xmode == ',')
+	mode_i_update(&f, &mode, win, wui, &ptng, &curs, &color);
+else if (mode == 'n')
 	mode_n_update(&f, win, wui, &ptng, &curs, &color);
 else if (mode == 'r')
 	mode_r_update(&f, win, wui, &ptng, &curs, &color);

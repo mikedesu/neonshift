@@ -8,6 +8,8 @@ int	mode_n_update(char *flag, WINDOW *win, WINDOW *wui,
 		struct ptng *p, struct curs *c, char *color);
 int	mode_r_update(char *flag, WINDOW *win, WINDOW *wui,
 		struct ptng *p, struct curs *c, char *color);
+int	mode_i_update(char *flag, char *mode, WINDOW *win, WINDOW *wui,
+		struct ptng *p, struct curs *c, char *color);
 
 int	change_color(char *color, WINDOW *win, WINDOW *wui);
 
