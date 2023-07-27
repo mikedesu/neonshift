@@ -32,6 +32,7 @@ if (c->i == 0){
 	c->i = p->size-1; wmove(win, p->h-1, p->w-1);}
 return 0;}
 
+
 int	mode_i_update(char *flag, char *mode, WINDOW *win, WINDOW *wui,
 		struct ptng *p, struct curs *c, char *color){
 if (*flag == 'z'){
@@ -39,10 +40,14 @@ if (p->buf[c->i]) p->buf[c->i] = 0;
 else p->buf[c->i] = 1;
 	wattron(win, COLOR_PAIR(p->buf[c->i]+1));
 	if (*mode == 'n') waddch(win, ' ');
-	else mvwaddch(win, (c->i+1)/p->w, (c->i+1)%p->w-2, ' ');
+	else mvwaddch(win,
+			(((c->i+1)%p->w-2)<0? (c->i+1)/p->w-1: (c->i+1)/p->w),
+			((((c->i+1)%p->w)<2)? (c->i+1)%p->w+p->w-2:
+					(c->i+1)%p->w-1), ' ');
 	wattron(win, COLOR_PAIR(color));}
-else wmove(win, (c->i+1)/p->w, (c->i+1)%p->w);	// <<<
-if (*mode == 'n'){ c->i++;
+else if (*mode == 'n') wmove(win, (c->i+1)/p->w, (c->i+1)%p->w);// <<<
+else wmove(win, (c->i+1)/p->w, (c->i+1)%p->w-1);		// <<<
+if (*mode == 'n'){ c->i++;					// <<<
 	if (c->i == p->size){
 		if (*color == 2) *color = 1; else *color = 2;
 		change_color(color, win, wui); *flag = 1;
