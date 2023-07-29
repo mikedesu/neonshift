@@ -1,4 +1,11 @@
 #include <ncurses.h>
+#include "../struct.h"
+
+unsigned char	to_binary(char *str);
+unsigned char	to_binary2(char *str);
+void	print_mov_mod(unsigned char mf);
+void	print_edt_mod(unsigned char ef);
+void	print_mov_v(struct vect v);
 
 #define MV 1
 #define MR 2
@@ -28,6 +35,68 @@
 #define unsetf(x, y) x&~y
 #define switchf(x,y) (F(x,y)?unsetf(x,y):setf(x,y))
 
+struct vect	get_mov_v(unsigned char *mov_mod){
+struct vect	v;
+	if (H(*mov_mod)){
+		switchf(*mov_mod, MH);
+		v.y = 0; v.x = -1;}
+	else if (J(*mov_mod)){
+		switchf(*mov_mod, MJ);
+		v.y = 1; v.x = 0;}
+	else if (K(*mov_mod)){
+		switchf(*mov_mod, MK);
+		v.y = -1; v.x = 0;}
+	else if (L(*mov_mod)){
+		switchf(*mov_mod, ML);
+		v.y = 0; v.x = 1;}
+	else if (1);
+return v;}
+
+
+int	main(int ac, char **av){
+initscr(); noecho(); curs_set(0);
+cbreak(); //nodelay(stdscr, TRUE);
+
+unsigned char	mov_mod, edt_mod;
+struct vect	mov_v;
+char	c;
+
+mov_mod = to_binary2("00000000");
+edt_mod = to_binary2("00000000");
+
+print_mov_mod(mov_mod);
+print_edt_mod(edt_mod);
+
+while ((c=getch())!='q'){ switch(c){
+	case 'g': mov_mod = switchf(mov_mod, MV); break;
+	case 'b': mov_mod = switchf(mov_mod, MR); break;
+	case ' ': mov_mod = switchf(mov_mod, MP); break;
+	case 'h': mov_mod = switchf(mov_mod, MH); break;
+	case 'j': mov_mod = switchf(mov_mod, MJ); break;
+	case 'k': mov_mod = switchf(mov_mod, MK); break;
+	case 'l': mov_mod = switchf(mov_mod, ML); break;
+
+	case 'z': edt_mod = switchf(edt_mod, EZ); break;
+	case 'p': edt_mod = switchf(edt_mod, E1); break;
+	case ';': edt_mod = switchf(edt_mod, EI); break;
+	default: break;}
+
+	mov_v = get_mov_v(&mov_mod);
+
+	move(0, 0);
+	print_mov_mod(mov_mod);
+	print_edt_mod(edt_mod);
+	print_mov_v(mov_v);
+	refresh();
+}
+
+refresh();
+
+//getch();
+endwin(); return 0;}
+
+
+
 unsigned char	to_binary(char *str){
 unsigned char	b = 0, pow;
 for (int i=0; i<8; i++){
@@ -55,66 +124,6 @@ printw("EF  %i:  Z%i 1%i I%i\t\t0 0 0 0 0\n",
 	ef, Z(ef), O(ef), I(ef));
 return;}
 
-char	get_dir(unsigned char *mf){
-char	dir;
-
-	if (H(*mf)){
-		switchf(*mf, MH);
-		dir = 0;}
-	else if (J(*mf)){
-		switchf(*mf, MJ);
-		dir = 1;}
-	else if (K(*mf)){
-		switchf(*mf, MK);
-		dir = 2;}
-	else if (L(*mf)){
-		switchf(*mf, ML);
-		dir = 3;}
-	else if (1);
-return dir;}
-
-
-
-int	main(int ac, char **av){
-initscr(); noecho(); curs_set(0);
-cbreak(); //nodelay(stdscr, TRUE);
-
-unsigned char	mov_mod, edt_mod;
-char	c;
-
-mov_mod = to_binary2("11110100");
-edt_mod = to_binary2("01000000");
-
-print_mov_mod(mov_mod);
-print_edt_mod(edt_mod);
-
-while ((c=getch())!='q'){ switch(c){
-	case 'g': mov_mod = switchf(mov_mod, MV);
-		break;
-	case 'b': mov_mod = switchf(mov_mod, MR);
-		break;
-	case ' ': mov_mod = switchf(mov_mod, MP);
-		break;
-	case 'h': mov_mod = switchf(mov_mod, MH);
-		break;
-	case 'j': mov_mod = switchf(mov_mod, MJ);
-		break;
-	case 'k': mov_mod = switchf(mov_mod, MK);
-		break;
-	case 'l': mov_mod = switchf(mov_mod, ML);
-		break;
-
-	case 'z': edt_mod = switchf(edt_mod, EZ);
-		break;
-	case 'p': edt_mod = switchf(edt_mod, E1);
-		break;
-	case ';': edt_mod = switchf(edt_mod, EI);
-		break;
-	default: break;}
-	print_mov_mod(mov_mod);
-	print_edt_mod(edt_mod);}
-
-refresh();
-
-//getch();
-endwin(); return 0;}
+void	print_mov_v(struct vect v){
+printw("vector:  [%i;%i]\n", v.y, v.x);
+return;}
