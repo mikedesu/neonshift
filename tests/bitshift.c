@@ -1,19 +1,29 @@
 #include <ncurses.h>
 
-#define MR 1
-#define MV 2
-#define MH 4
-#define MJ 8
-#define MK 16
-#define ML 32
+#define MV 1
+#define MR 2
+#define MP 4
+#define MH 8
+#define MJ 16
+#define MK 32
+#define ML 64
+#define EZ 1
+#define E1 2
+#define EI 4
+
 #define fto1(x) ((x)?1:0)
 #define F(x, y) fto1(x&y)
-#define R(x) fto1(x&MR)
 #define V(x) fto1(x&MV)
+#define R(x) fto1(x&MR)
+#define P(x) fto1(x&MP)
 #define H(x) fto1(x&MH)
 #define J(x) fto1(x&MJ)
 #define K(x) fto1(x&MK)
 #define L(x) fto1(x&ML)
+#define Z(x) fto1(x&EZ)
+#define O(x) fto1(x&E1)
+#define I(x) fto1(x&EI)
+
 #define setf(x, y) x|y
 #define unsetf(x, y) x&~y
 #define switchf(x,y) (F(x,y)?unsetf(x,y):setf(x,y))
@@ -35,31 +45,74 @@ void	print_mov_mod(unsigned char mf){
 //printw("%i: R%i V%i H%i J%i K%i L%i\n", mov_mod, mov_mod&1, (mov_mod&2)>>1, (mov_mod&4)>>2, (mov_mod&8)>>3,
 //		(mov_mod&16)>>4, (mov_mod&32)>>5); refresh();
 //printw("%i: R%i V%i H%i J%i K%i L%i\n", mov_mod, mov_mod&2, mov_mods%4); refresh();
-printw("%i: R%i V%i H%i J%i K%i L%i\n",
-	mf, R(mf), V(mf), F(mf, MH), J(mf), K(mf), L(mf));
+printw("MF  %i:  V%i R%i P%i H%i J%i K%i L%i\t0\n",
+	mf, V(mf), R(mf), P(mf), H(mf), J(mf), K(mf), L(mf));
 //fto1(mflags&R));
 return;}
+
+void	print_edt_mod(unsigned char ef){
+printw("EF  %i:  Z%i 1%i I%i\t\t0 0 0 0 0\n",
+	ef, Z(ef), O(ef), I(ef));
+return;}
+
+char	get_dir(unsigned char *mf){
+char	dir;
+
+	if (H(*mf)){
+		switchf(*mf, MH);
+		dir = 0;}
+	else if (J(*mf)){
+		switchf(*mf, MJ);
+		dir = 1;}
+	else if (K(*mf)){
+		switchf(*mf, MK);
+		dir = 2;}
+	else if (L(*mf)){
+		switchf(*mf, ML);
+		dir = 3;}
+	else if (1);
+return dir;}
+
 
 
 int	main(int ac, char **av){
 initscr(); noecho(); curs_set(0);
 cbreak(); //nodelay(stdscr, TRUE);
 
-unsigned char	mov_mod;
+unsigned char	mov_mod, edt_mod;
 char	c;
 
 mov_mod = to_binary2("11110100");
+edt_mod = to_binary2("01000000");
 
-// === PRINTING ===
 print_mov_mod(mov_mod);
+print_edt_mod(edt_mod);
 
-// === KEY INPUT ===
 while ((c=getch())!='q'){ switch(c){
-	case 'r':
-		mov_mod = switchf(mov_mod, MR);
-		print_mov_mod(mov_mod);
+	case 'g': mov_mod = switchf(mov_mod, MV);
 		break;
-	default: break;}}
+	case 'b': mov_mod = switchf(mov_mod, MR);
+		break;
+	case ' ': mov_mod = switchf(mov_mod, MP);
+		break;
+	case 'h': mov_mod = switchf(mov_mod, MH);
+		break;
+	case 'j': mov_mod = switchf(mov_mod, MJ);
+		break;
+	case 'k': mov_mod = switchf(mov_mod, MK);
+		break;
+	case 'l': mov_mod = switchf(mov_mod, ML);
+		break;
+
+	case 'z': edt_mod = switchf(edt_mod, EZ);
+		break;
+	case 'p': edt_mod = switchf(edt_mod, E1);
+		break;
+	case ';': edt_mod = switchf(edt_mod, EI);
+		break;
+	default: break;}
+	print_mov_mod(mov_mod);
+	print_edt_mod(edt_mod);}
 
 refresh();
 
