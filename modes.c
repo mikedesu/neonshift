@@ -1,66 +1,5 @@
 #include <ncurses.h>
-
 #include "modes.h"
-#include "struct.h"
-
-int	mode_n_update(char *flag, WINDOW *win, WINDOW *wui,
-		struct ptng *p, struct curs *c, char *color){
-if (*flag == 'z'){
-	waddch(win, ' ');
-	if (p->buf[c->i]) p->buf[c->i] = 0;
-	else p->buf[c->i] = 1;}
-else wmove(win, (c->i+1)/p->w, (c->i+1)%p->w);
-c->i++;
-if (c->i == p->size){
-	if (*color == 2) *color = 1; else *color = 2;
-	change_color(color, win, wui); *flag = 1;
-	c->i = 0; wmove(win, 0, 0);}
-return 0;}
-
-
-int	mode_r_update(char *flag, WINDOW *win, WINDOW *wui,
-		struct ptng *p, struct curs *c, char *color){
-if (*flag == 'z'){
-	mvwaddch(win, (c->i+1)/p->w, (c->i+1)%p->w-1, ' ');
-	if (p->buf[c->i]) p->buf[c->i] = 0;
-	else p->buf[c->i] = 1;}
-else wmove(win, (c->i+1)/p->w, (c->i+1)%p->w-1);
-c->i--;
-if (c->i == 0){
-	if (*color == 2) *color = 1; else *color = 2;
-	change_color(color, win, wui); *flag = 1;
-	c->i = p->size-1; wmove(win, p->h-1, p->w-1);}
-return 0;}
-
-
-int	mode_i_update(char *flag, char *mode, WINDOW *win, WINDOW *wui,
-		struct ptng *p, struct curs *c, char *color){
-if (*flag == 'z'){
-if (p->buf[c->i]) p->buf[c->i] = 0;
-else p->buf[c->i] = 1;
-	wattron(win, COLOR_PAIR(p->buf[c->i]+1));
-	if (*mode == 'n') waddch(win, ' ');
-	else mvwaddch(win,
-			(((c->i+1)%p->w-2)<0? (c->i+1)/p->w-1: (c->i+1)/p->w),
-			((((c->i+1)%p->w)<2)? (c->i+1)%p->w+p->w-2:
-					(c->i+1)%p->w-1), ' ');
-	wattron(win, COLOR_PAIR(color));}
-else if (*mode == 'n') wmove(win, (c->i+1)/p->w, (c->i+1)%p->w);// <<<
-else wmove(win, (c->i+1)/p->w, (c->i+1)%p->w-1);		// moving b4
-if (*mode == 'n'){ c->i++;					// increment
-	if (c->i == p->size){
-		if (*color == 2) *color = 1; else *color = 2;
-		change_color(color, win, wui); *flag = 1;
-		c->i = 0; wmove(win, 0, 0);}}
-else{ c->i--;
-	if (c->i == 0){
-		if (*color == 2) *color = 1; else *color = 2;
-		change_color(color, win, wui); *flag = 1;
-		c->i = p->size-1; wmove(win, p->h-1, p->w-1);}}
-return 0;}
-
-
-
 
 int	change_color(char *color, WINDOW *win, WINDOW *wui){
 	wattron(win, COLOR_PAIR(*color));
@@ -69,3 +8,30 @@ int	change_color(char *color, WINDOW *win, WINDOW *wui){
 	wprintw(wui, "c c c"); wrefresh(wui);
 	wattroff(wui, COLOR_PAIR(*color));
 return 0;}
+
+struct vect	get_mov_v(unsigned char *mov_mod){
+struct vect	v;
+	if (H(*mov_mod)){
+		switchf(*mov_mod, MH);
+		v.y = 0; v.x = -1;}
+	else if (J(*mov_mod)){
+		switchf(*mov_mod, MJ);
+		v.y = 1; v.x = 0;}
+	else if (K(*mov_mod)){
+		switchf(*mov_mod, MK);
+		v.y = -1; v.x = 0;}
+	else if (L(*mov_mod)){
+		switchf(*mov_mod, ML);
+		v.y = 0; v.x = 1;}
+	else if (P(*mov_mod)){
+		v.y = 0; v.x = 0;}
+	else if (!V(*mov_mod) && !R(*mov_mod)){
+		v.y = 0; v.x = 1;}
+	else if (!V(*mov_mod) && R(*mov_mod)){
+		v.y = 0; v.x = -1;}
+	else if (V(*mov_mod) && !R(*mov_mod)){
+		v.y = 1; v.x = 0;}
+	else if (V(*mov_mod) && R(*mov_mod)){
+		v.y = -1; v.x = 0;}
+return v;}
+

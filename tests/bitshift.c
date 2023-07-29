@@ -49,7 +49,16 @@ struct vect	v;
 	else if (L(*mov_mod)){
 		switchf(*mov_mod, ML);
 		v.y = 0; v.x = 1;}
-	else if (1);
+	else if (P(*mov_mod)){
+		v.y = 0; v.x = 0;}
+	else if (!V(*mov_mod) && !R(*mov_mod)){
+		v.y = 0; v.x = 1;}
+	else if (!V(*mov_mod) && R(*mov_mod)){
+		v.y = 0; v.x = -1;}
+	else if (V(*mov_mod) && !R(*mov_mod)){
+		v.y = 1; v.x = 0;}
+	else if (V(*mov_mod) && R(*mov_mod)){
+		v.y = -1; v.x = 0;}
 return v;}
 
 
