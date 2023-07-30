@@ -4,7 +4,7 @@
 int	change_color(char color, WINDOW *win, WINDOW *wui){
 	wattron(win, COLOR_PAIR(color));
 	wattron(wui, COLOR_PAIR(color));
-	mvwprintw(wui, 2, 0, "c c c\n");
+	mvwprintw(wui, 4, 0, "c c c\n");
 	wprintw(wui, "c c c"); wrefresh(wui);
 	wattron(wui, COLOR_PAIR(1));
 return 0;}
@@ -69,5 +69,6 @@ else{
 		p->buf[bi] = 0;
 		wattron(win, COLOR_PAIR(1));}
 	waddch(win, ' ');
-	wattron(win, COLOR_PAIR(color));}}
+	wattron(win, COLOR_PAIR(color));}
+wmove(win, c->y, c->x);}
 return;}

@@ -21,11 +21,11 @@ char		color;
 char		c, q;
 //char	z = 'z';
 
-curs.y = 0; curs.x = 0;
 fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/fps;
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
 ptng.buf = (char *)malloc(ptng.size);
-mov_mod = 0; edt_mod = 0; color = 2;
+curs.y = ptng.h-1; curs.x = ptng.w-1;
+mov_mod = 2; edt_mod = 0; color = 2;
 q = 1;
 
 refresh();
@@ -36,9 +36,12 @@ wattron(win, COLOR_PAIR(1));
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
 wui = newwin(10, 10, 4, 9+ptng.w+5); //wprintw(wui, "MODES\n");
-wattron(wui, COLOR_PAIR(color)); mvwprintw(wui, 2, 0, "c c c\n");
+wattron(wui, COLOR_PAIR(1));
+wprintw(wui, (O(edt_mod)?"\nspot \n":"\nstroke\n"));
+wprintw(wui, (I(edt_mod)?"invert\n\n":"      \n\n"));
+wattron(wui, COLOR_PAIR(color)); wprintw(wui, "c c c\n");
 wprintw(wui, "c c c\n\n"); wattron(wui, COLOR_PAIR(1));
-wrefresh(wui);
+wprintw(wui, "fps: %i\n", fps); wrefresh(wui);
 
 if ((file=fopen("painting", "r"))) { int i=0;
 	while ((c=fgetc(file)) != EOF){
@@ -85,8 +88,12 @@ case 'k': mov_mod = switchf(mov_mod, MK); break;
 case 'l': mov_mod = switchf(mov_mod, ML); break;
 
 case 'z': edt_mod = switchf(edt_mod, EZ); break;
-case 'p': edt_mod = switchf(edt_mod, E1); break;
-case ';': edt_mod = switchf(edt_mod, EI); break;
+case ';': edt_mod = switchf(edt_mod, E1);
+	  mvwprintw(wui, 1, 0, (O(edt_mod)?"spot  ":"stroke"));
+	  wrefresh(wui); break;
+case 'p': edt_mod = switchf(edt_mod, EI);
+	  mvwprintw(wui, 2, 0, (I(edt_mod)?"invert":"      "));
+	  wrefresh(wui); break;
 default: break;}}
 
 mov_v = get_mov_v(&mov_mod);
