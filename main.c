@@ -2,16 +2,13 @@
 #include <stdlib.h> //malloc
 #include <time.h> //CLOCKS_PER_SEC clock
 #include <unistd.h> //usleep
-//
 #include "struct.h" //structs: curs ptng, constants
-#include "modes.h"
+#include "modes.h" //constants, macros, functioning
 
 int	main(int ac, char **av){
-initscr(); // = NCURSES INIT ===
-cbreak(); noecho();
+initscr(); cbreak(); noecho();
 nodelay(stdscr, TRUE);
-//curs_set(0);
-start_color(); // ==============
+start_color(); //curs_set(0);
 
 WINDOW		*win, *wui;
 clock_t		clk_start, clk;
@@ -25,15 +22,16 @@ char	color;
 char		c, q;
 //char	z = 'z';
 
-curs.i = 0; curs.c = '.';
+curs.y = 0; curs.x = 0; curs.c = '.';
 curs.fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/curs.fps;
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
 ptng.buf = (short *)malloc(ptng.size*sizeof(short));
 mov_mod = 0; edt_mod = 0; color = 2; q = 1;
 
-init_pair(1, 10, 0); //green foreground
-init_pair(2, 0, 10); //green background
+init_pair(1, 10, 0); //black
+init_pair(2, 0, 10); //green
 refresh(); win = newwin(ptng.h+2, ptng.w+2, 3, 7);
+wattron(win, COLOR_PAIR(1));
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
 wui = newwin(20, 15, 4, 9+ptng.w+5); //wprintw(wui, "MODES\n");
@@ -41,19 +39,19 @@ wattron(wui, COLOR_PAIR(color)); mvwprintw(wui, 2, 0, "c c c\n");
 wprintw(wui, "c c c\n\n"); wattroff(wui, COLOR_PAIR(color));
 wrefresh(wui);
 
-if ((file = fopen("painting", "r"))) {
+if ((file = fopen("painting", "r"))) { int i=0;
 while ((c=fgetc(file)) != EOF){
 	c = fgetc(file); switch(c){
-	case '9': ptng.buf[curs.i] = 0;
+	case '9': ptng.buf[i] = 0;
 		wattron(win, COLOR_PAIR(1));
 		waddch(win, ' '); break;
-	case '1': ptng.buf[curs.i] = 1;
+	case '1': ptng.buf[i] = 1;
 		wattron(win, COLOR_PAIR(2));
 		waddch(win, ' '); break;
-	defautl: break;}  curs.i++;
+	defautl: break;}  i++;
 fgetc(file); fgetc(file); fgetc(file);
-if (curs.i!=ptng.size-1 && !((curs.i)%ptng.w)) fgetc(file);}
-	fclose(file); curs.i = 0; wrefresh(win);}
+if (!(i%ptng.w)) fgetc(file);}
+	fclose(file); wrefresh(win);}
 else for (int i=0; i<ptng.size; i++) ptng.buf[i] = 0;
 
 wattron(win, COLOR_PAIR(color));
@@ -91,6 +89,8 @@ case ';': edt_mod = switchf(edt_mod, EI); break;
 default: break;}}
 
 mov_v = get_mov_v(&mov_mod);
+move_curs(win, &curs, &ptng, mov_v, mov_mod);
+edit_pntg(win, &curs, &ptng, &edt_mod, color);
 
 wrefresh(win);
 clk = clock() - clk_start;

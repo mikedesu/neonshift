@@ -3,7 +3,7 @@
 
 #define BASE_W 70
 #define BASE_H 20
-#define BASE_FPS 70
+#define BASE_FPS 30
 
 struct	vect{
 	char	y;
@@ -11,7 +11,8 @@ struct	vect{
 };
 
 struct	curs{
-	int	i;
+	char	y;
+	char	x;
 	char	c;
 	int	fps;
 };
