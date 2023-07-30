@@ -1,12 +1,12 @@
 #include <ncurses.h>
 #include "modes.h"
 
-int	change_color(char *color, WINDOW *win, WINDOW *wui){
-	wattron(win, COLOR_PAIR(*color));
-	wattron(wui, COLOR_PAIR(*color));
+int	change_color(char color, WINDOW *win, WINDOW *wui){
+	wattron(win, COLOR_PAIR(color));
+	wattron(wui, COLOR_PAIR(color));
 	mvwprintw(wui, 2, 0, "c c c\n");
 	wprintw(wui, "c c c"); wrefresh(wui);
-	wattroff(wui, COLOR_PAIR(*color));
+	wattron(wui, COLOR_PAIR(1));
 return 0;}
 
 struct vect	get_mov_v(unsigned char *mov_mod){
@@ -35,7 +35,7 @@ struct vect	v;
 		v.y = -1; v.x = 0;}
 return v;}
 
-void	move_curs(WINDOW *win, struct curs *c,
+void	move_curs(WINDOW *win, struct vect *c,
 		struct ptng *p, struct vect v,
 		unsigned char mov_mod){
 if (!c->y&&!c->x&&(v.y==-1||v.x==-1)){ c->y=p->h-1; c->x=p->w-1;}
@@ -51,21 +51,22 @@ else if (v.x==1) c->x++;
 wmove(win, c->y, c->x);
 return;}
 
-void	edit_pntg(WINDOW *win, struct curs *c,
+void	edit_pntg(WINDOW *win, struct vect *c,
 		struct ptng *p, unsigned char *edt_mod,
 		char color){
+	int	bi = c->y*p->w+c->x;
 if (Z(*edt_mod)){
 if (O(*edt_mod)) *edt_mod = switchf(*edt_mod, EZ);
 if (!I(*edt_mod)){
-	if (color == 1) p->buf[c->y*p->w+c->x] = 0;
-	else if (color == 2) p->buf[c->y*p->w+c->x] = 1;
+	if (color == 1) p->buf[bi] = 0;
+	else if (color == 2) p->buf[bi] = 1;
 	waddch(win, ' ');}
 else{
-	if (p->buf[c->y*p->w+c->x] == 0){
-		p->buf[c->y*p->w+c->x] = 1;
+	if (p->buf[bi] == 0){
+		p->buf[bi] = 1;
 		wattron(win, COLOR_PAIR(2));}
-	else if (p->buf[c->y*p->w+c->x] == 1){
-		p->buf[c->y*p->w+c->x] = 0;
+	else if (p->buf[bi] == 1){
+		p->buf[bi] = 0;
 		wattron(win, COLOR_PAIR(1));}
 	waddch(win, ' ');
 	wattron(win, COLOR_PAIR(color));}}

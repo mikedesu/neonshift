@@ -31,13 +31,13 @@
 #define unsetf(x, y) x&~y
 #define switchf(x,y) (F(x,y)?unsetf(x,y):setf(x,y))
 
-int	change_color(char *color, WINDOW *win, WINDOW *wui);
+int		change_color(char color, WINDOW *win, WINDOW *wui);
 struct vect	get_mov_v(unsigned char *mov_mod);
-void	move_curs(WINDOW *win, struct curs *c,
-		struct ptng *p, struct vect v,
-		unsigned char mov_mod);
-void	edit_pntg(WINDOW *win, struct curs *c,
-		struct ptng *p, unsigned char *edt_mod,
-		char color);
+void		move_curs(WINDOW *win, struct vect *c,
+			struct ptng *p, struct vect v,
+			unsigned char mov_mod);
+void		edit_pntg(WINDOW *win, struct vect *c,
+			struct ptng *p, unsigned char *edt_mod,
+			char color);
 
 #endif

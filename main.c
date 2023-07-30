@@ -12,45 +12,46 @@ start_color(); //curs_set(0);
 
 WINDOW		*win, *wui;
 clock_t		clk_start, clk;
-struct curs	curs;
+struct vect	curs, mov_v;
 struct ptng	ptng;
 FILE		*file;
 unsigned char	mov_mod, edt_mod;
-struct vect	mov_v;
-int		refresh_rate;//, color;
-char	color;
+int		refresh_rate, fps;
+char		color;
 char		c, q;
 //char	z = 'z';
 
-curs.y = 0; curs.x = 0; curs.c = '.';
-curs.fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/curs.fps;
+curs.y = 0; curs.x = 0;
+fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/fps;
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
-ptng.buf = (short *)malloc(ptng.size*sizeof(short));
-mov_mod = 0; edt_mod = 0; color = 2; q = 1;
+ptng.buf = (char *)malloc(ptng.size);
+mov_mod = 0; edt_mod = 0; color = 2;
+q = 1;
 
+refresh();
 init_pair(1, 10, 0); //black
 init_pair(2, 0, 10); //green
-refresh(); win = newwin(ptng.h+2, ptng.w+2, 3, 7);
+win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 wattron(win, COLOR_PAIR(1));
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
-wui = newwin(20, 15, 4, 9+ptng.w+5); //wprintw(wui, "MODES\n");
+wui = newwin(10, 10, 4, 9+ptng.w+5); //wprintw(wui, "MODES\n");
 wattron(wui, COLOR_PAIR(color)); mvwprintw(wui, 2, 0, "c c c\n");
-wprintw(wui, "c c c\n\n"); wattroff(wui, COLOR_PAIR(color));
+wprintw(wui, "c c c\n\n"); wattron(wui, COLOR_PAIR(1));
 wrefresh(wui);
 
-if ((file = fopen("painting", "r"))) { int i=0;
-while ((c=fgetc(file)) != EOF){
-	c = fgetc(file); switch(c){
-	case '9': ptng.buf[i] = 0;
-		wattron(win, COLOR_PAIR(1));
-		waddch(win, ' '); break;
-	case '1': ptng.buf[i] = 1;
-		wattron(win, COLOR_PAIR(2));
-		waddch(win, ' '); break;
-	defautl: break;}  i++;
-fgetc(file); fgetc(file); fgetc(file);
-if (!(i%ptng.w)) fgetc(file);}
+if ((file=fopen("painting", "r"))) { int i=0;
+	while ((c=fgetc(file)) != EOF){
+		c = fgetc(file); switch(c){
+		case '9': ptng.buf[i] = 0;
+			wattron(win, COLOR_PAIR(1));
+			waddch(win, ' '); break;
+		case '1': ptng.buf[i] = 1;
+			wattron(win, COLOR_PAIR(2));
+			waddch(win, ' '); break;
+		defautl: break;}  i++;
+		fgetc(file); fgetc(file); fgetc(file);
+		if (!(i%ptng.w)) fgetc(file);}
 	fclose(file); wrefresh(win);}
 else for (int i=0; i<ptng.size; i++) ptng.buf[i] = 0;
 
@@ -58,7 +59,7 @@ wattron(win, COLOR_PAIR(color));
 clk_start = clock();
 /* ========================== */	while (q){	/*====*/
 
-if ((c=getch()) != ERR){ switch(c){
+if ((c=getch())!=ERR){ switch(c){
 case 'q': q = 0; break;
 case 's': file = fopen("painting", "w");
 	for (int i=0; i<ptng.size; i++){ switch(ptng.buf[i]){
@@ -73,7 +74,7 @@ case 's': file = fopen("painting", "w");
 	fclose(file); break;
 
 case 'c': if (color == 2) color = 1; else color = 2;
-	change_color(&color, win, wui); break;
+	change_color(color, win, wui); break;
 
 case 'g': mov_mod = switchf(mov_mod, MV); break;
 case 'b': mov_mod = switchf(mov_mod, MR); break;
