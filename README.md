@@ -1,12 +1,14 @@
 ## NEONSHIFT ASCII
 **Speedpainting brain interface**\
 **Prototype No1**
+
 \
 \
 
 **usage:**
 > make\
 > ./neonshift
+
 \
 
 **keys:**
@@ -27,11 +29,14 @@ hjkl - move
 s - save\
 Neonshift saves to the 'painting' file. If you want to keep your stuff, you need to copy that file.\
 If the 'painting' file exists upon launch, it is loaded.
+
 \
 
 **notes:**
 - Make sure you report any issues you encounter with compiling and running the program
 - Please send your best pieces in order to pin them here (no nsfw)
+
+\
 \
 \
 
