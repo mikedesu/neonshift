@@ -61,7 +61,7 @@ box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
 wui = newwin(10, 10, 4, 9+ptng.w+5);
 wattron(wui, COLOR_PAIR(1));
-mvwprintw(wui, 1, 0, (O(edt_mod)?"\nspot \n":"\nstroke\n"));
+wprintw(wui, (O(edt_mod)?"\nspot \n":"\nstroke\n"));
 wattron(wui, COLOR_PAIR(color));
 mvwprintw(wui, 4, 0, "c c c\nc c c\n\n");
 wattron(wui, COLOR_PAIR(1));
