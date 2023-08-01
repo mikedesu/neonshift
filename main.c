@@ -5,6 +5,8 @@
 #include "struct.h" //structs: curs ptng, constants
 #include "modes.h" //constants, macros, functioning
 
+void	title_quit(){ endwin(); exit(EXIT_SUCCESS);}
+
 int	main(int ac, char **av){
 initscr(); cbreak(); noecho();
 nodelay(stdscr, TRUE);
@@ -23,17 +25,13 @@ char		c, q;
 
 fps = BASE_FPS; refresh_rate = CLOCKS_PER_SEC/fps;
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
-ptng.buf = (char *)malloc(ptng.size);
 curs.y = ptng.h-1; curs.x = ptng.w-1;
 mov_mod = 2; edt_mod = 0; color = 2;
 q = 1;
 
-init_pair(10, 14, 0); //title screen
-init_pair(1, 10, 0); //black
-init_pair(2, 0, 10); //green
+init_pair(10, 14, 0);	//title screen
 refresh();
-
-attron(COLOR_PAIR(10)|A_BOLD);		//title screen
+attron(COLOR_PAIR(10)|A_BOLD);
 mvprintw((ptng.h+2+3+1)/2-6, (ptng.w+2+7+4)/2-25/2,
 		"N   E   O   N   S   H   I   F   T");
 mvprintw((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2,
@@ -47,7 +45,15 @@ mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6, 'G');
 mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6+16, 'R');
 move((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2+29);
 refresh();
-while (getch()==ERR);
+c = 1; while (c&&(c=getch())){ switch(c){
+	case 'q': title_quit(); break;
+	case 'g': init_pair(1, 10, 0); //black
+		init_pair(2, 0, 10); //green
+		c = 0; break;
+	case 'r': init_pair(1, 9, 0); //black
+		init_pair(2, 0, 9); //red
+		c = 0; break;
+	default: break;}}
 
 win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 wattron(win, COLOR_PAIR(1));
@@ -61,6 +67,7 @@ mvwprintw(wui, 4, 0, "c c c\nc c c\n\n");
 wattron(wui, COLOR_PAIR(1));
 wprintw(wui, "fps: %i\n", fps); wrefresh(wui);
 
+ptng.buf = (char *)malloc(ptng.size);
 if ((file=fopen("painting", "r"))) { int i=0;
 	while ((c=fgetc(file)) != EOF){
 		c = fgetc(file); switch(c){
