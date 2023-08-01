@@ -28,9 +28,27 @@ curs.y = ptng.h-1; curs.x = ptng.w-1;
 mov_mod = 2; edt_mod = 0; color = 2;
 q = 1;
 
-refresh();
+init_pair(10, 14, 0); //title screen
 init_pair(1, 10, 0); //black
 init_pair(2, 0, 10); //green
+refresh();
+
+attron(COLOR_PAIR(10)|A_BOLD);		//title screen
+mvprintw((ptng.h+2+3+1)/2-6, (ptng.w+2+7+4)/2-25/2,
+		"N   E   O   N   S   H   I   F   T");
+mvprintw((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2,
+		"speedpainting brain interface");
+mvprintw((ptng.h+2+3+1)/2-6+3, (ptng.w+2+7+4)/2-2,
+		"prototype no1");
+mvprintw((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6,
+		"Green           Red");
+attron(A_UNDERLINE);
+mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6, 'G');
+mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6+16, 'R');
+move((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2+29);
+refresh();
+while (getch()==ERR);
+
 win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 wattron(win, COLOR_PAIR(1));
 box(win, 0, 0); wrefresh(win); delwin(win);
