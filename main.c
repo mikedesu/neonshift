@@ -12,7 +12,7 @@ start_color(); //curs_set(0);
 
 WINDOW		*win, *wui;
 clock_t		clk_start, clk;
-struct vect	curs, mov_v;
+struct vect	curs, mov_v, sweep_v;
 struct ptng	ptng;
 FILE		*file;
 unsigned char	mov_mod, edt_mod;
@@ -35,12 +35,12 @@ win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 wattron(win, COLOR_PAIR(1));
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
-wui = newwin(10, 10, 4, 9+ptng.w+5); //wprintw(wui, "MODES\n");
+wui = newwin(10, 10, 4, 9+ptng.w+5);
 wattron(wui, COLOR_PAIR(1));
-wprintw(wui, (O(edt_mod)?"\nspot \n":"\nstroke\n"));
-wprintw(wui, (I(edt_mod)?"invert\n\n":"      \n\n"));
-wattron(wui, COLOR_PAIR(color)); wprintw(wui, "c c c\n");
-wprintw(wui, "c c c\n\n"); wattron(wui, COLOR_PAIR(1));
+mvwprintw(wui, 1, 0, (O(edt_mod)?"\nspot \n":"\nstroke\n"));
+wattron(wui, COLOR_PAIR(color));
+mvwprintw(wui, 4, 0, "c c c\nc c c\n\n");
+wattron(wui, COLOR_PAIR(1));
 wprintw(wui, "fps: %i\n", fps); wrefresh(wui);
 
 if ((file=fopen("painting", "r"))) { int i=0;
@@ -78,10 +78,17 @@ case 's': file = fopen("painting", "w");
 
 case 'c': if (color == 2) color = 1; else color = 2;
 	change_color(color, win, wui); break;
+case '-': if(fps>1) fps--; refresh_rate = CLOCKS_PER_SEC/fps;
+	 mvwprintw(wui, 7, 5, "%i  ", fps);
+	 wrefresh(wui); break;
+case '+': fps++; refresh_rate = CLOCKS_PER_SEC/fps;
+	 mvwprintw(wui, 7, 5, "%i  ", fps);
+	 wrefresh(wui); break;
 
 case 'g': mov_mod = switchf(mov_mod, MV); break;
 case 'b': mov_mod = switchf(mov_mod, MR); break;
 case ' ': mov_mod = switchf(mov_mod, MP); break;
+
 case 'h': mov_mod = switchf(mov_mod, MH); break;
 case 'j': mov_mod = switchf(mov_mod, MJ); break;
 case 'k': mov_mod = switchf(mov_mod, MK); break;
@@ -97,11 +104,11 @@ case 'p': edt_mod = switchf(edt_mod, EI);
 default: break;}}
 
 mov_v = get_mov_v(&mov_mod);
-move_curs(win, &curs, &ptng, mov_v, mov_mod);
+move_curs(&curs, &ptng, mov_v);
 edit_pntg(win, &curs, &ptng, &edt_mod, color);
 
 wrefresh(win);
-clk = clock() - clk_start;
+clk = clock()-clk_start;
 usleep((refresh_rate-clk)*(1000000/CLOCKS_PER_SEC));
 clk_start = clock();	/* ================== */	}	/*====*/
 

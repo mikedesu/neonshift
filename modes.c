@@ -35,9 +35,8 @@ struct vect	v;
 		v.y = -1; v.x = 0;}
 return v;}
 
-void	move_curs(WINDOW *win, struct vect *c,
-		struct ptng *p, struct vect v,
-		unsigned char mov_mod){
+void	move_curs(struct vect *c, struct ptng *p,
+		struct vect v){
 if (!c->y&&!c->x&&(v.y==-1||v.x==-1)){ c->y=p->h-1; c->x=p->w-1;}
 else if (c->y==p->h-1&&c->x==p->w-1&&(v.y==1||v.x==1)){ c->y=0; c->x=0;}
 else if (!c->y&&v.y==-1){ c->y=p->h-1; c->x--;}
@@ -48,13 +47,13 @@ else if (v.y==-1) c->y--;
 else if (v.y==1) c->y++;
 else if (v.x==-1) c->x--;
 else if (v.x==1) c->x++;
-wmove(win, c->y, c->x);
 return;}
 
 void	edit_pntg(WINDOW *win, struct vect *c,
 		struct ptng *p, unsigned char *edt_mod,
 		char color){
 	int	bi = c->y*p->w+c->x;
+wmove(win, c->y, c->x);
 if (Z(*edt_mod)){
 if (O(*edt_mod)) *edt_mod = switchf(*edt_mod, EZ);
 if (!I(*edt_mod)){
