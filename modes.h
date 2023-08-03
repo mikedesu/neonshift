@@ -35,8 +35,9 @@ int		change_color(char color, WINDOW *win, WINDOW *wui);
 struct vect	get_mov_v(unsigned char *mov_mod);
 void		move_curs(struct vect *c, struct ptng *p,
 			struct vect v);
-void		edit_pntg(WINDOW *win, struct vect *c,
-			struct ptng *p, unsigned char *edt_mod,
-			char color);
+void		edit_pntg(WINDOW *win, struct vect *c, struct ptng *p,
+			unsigned char *edt_mod, char color);
 
 #endif
+
+//by d0pelrh

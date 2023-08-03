@@ -18,3 +18,5 @@ struct	ptng{
 };
 
 #endif
+
+//by d0pelrh
