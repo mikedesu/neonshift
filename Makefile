@@ -1,2 +1,2 @@
 all:
-	gcc -o neonshift main.c modes.c -lncurses
+	gcc -o neonshift src/main.c src/modes.c -Isrc -lncurses

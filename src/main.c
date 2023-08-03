@@ -23,7 +23,6 @@ int		refresh_rate, fps;
 clock_t		clk_start, clk;
 FILE		*file;
 //char	z = 'z';
-
 ptng.w = BASE_W; ptng.h = BASE_H; ptng.size = ptng.w*ptng.h;
 curs.y = ptng.h-1; curs.x = ptng.w-1;
 mov_mod = 2; edt_mod = 0; color = 2; q = 1;
@@ -60,7 +59,9 @@ while ((c=getch())==ERR);
 if (c == 'q') title_quit();
 
 win = newwin(ptng.h+2, ptng.w+2, 3, 7);		//setup
-wattron(win, COLOR_PAIR(1));
+init_pair(69, 10, 0);
+if (overall_color == 'g') wattron(win, COLOR_PAIR(1));
+else wattron(win, COLOR_PAIR(69));
 box(win, 0, 0); wrefresh(win); delwin(win);
 win = newwin(ptng.h, ptng.w, 4, 8);
 wui = newwin(10, 10, 4, 9+ptng.w+5);
