@@ -1,9 +1,9 @@
 ### NEONSHIFT ASCII
 
-**Speedpainting brain interface**\
+**ASCII speedpainting brain interface**\
 **Prototype No1**
 
-**Supports 2 colors!**
+## Supports 2 colors!
 
 ### usage:
 
@@ -14,23 +14,20 @@ make
 
 ### key bindings:
 
-**movement**
-
+**movement**\
 **g** : vertical sweeping\
 **b** : reverse sweeping\
-**-/+** : sweeping speed\
+**-/+** : adjust sweeping speed\
 **spacebar** : pause\
 **hjkl** : move
 
-**painting**
-
+**painting**\
 **z** : paint\
 **c** : switch color\
 **;** : stroke/spot\
 **p** : invert
 
-**functional**
-
+**functional**\
 **q** : quit\
 **s** : save\
 /!\ Neonshift prototype saves to the 'painting' file only. If you want to keep your stuff, you need to copy that file.\

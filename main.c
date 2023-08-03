@@ -19,7 +19,7 @@ struct ptng	ptng;
 FILE		*file;
 unsigned char	mov_mod, edt_mod;
 int		refresh_rate, fps;
-char		color;
+char		color, overall_color;
 char		c, q;
 //char	z = 'z';
 
@@ -29,7 +29,7 @@ curs.y = ptng.h-1; curs.x = ptng.w-1;
 mov_mod = 2; edt_mod = 0; color = 2;
 q = 1;
 
-init_pair(10, 14, 0);	//title screen
+init_pair(10, 14, 0);	//title screens
 refresh();
 attron(COLOR_PAIR(10)|A_BOLD);
 mvprintw((ptng.h+2+3+1)/2-6, (ptng.w+2+7+4)/2-25/2,
@@ -43,25 +43,22 @@ mvprintw((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6,
 attron(A_UNDERLINE);
 mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6, 'G');
 mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6+16, 'R');
-attroff(A_UNDERLINE);
 move((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2+32);
-refresh();
+attroff(A_UNDERLINE); refresh();
 c = 1; while (c&&(c=getch())){ switch(c){
 	case 'q': title_quit(); break;
 	case 'g': init_pair(1, 10, 0); //black
 		init_pair(2, 0, 10); //green
-		c = 0; break;
+		overall_color = 'g'; c = 0; break;
 	case 'r': init_pair(1, 9, 0); //black
 		init_pair(2, 0, 9); //red
-		c = 0; break;
+		overall_color = 'r'; c = 0; break;
 	default: break;}}
-
 erase(); attron(COLOR_PAIR(1));
 mvprintw((ptng.h+2+3+1)/2-6+3, (ptng.w+2+7+4)/2-2,
 		"to darkmage"); refresh();
 while ((c=getch())==ERR);
 if (c == 'q') title_quit();
-
 
 win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 wattron(win, COLOR_PAIR(1));
@@ -79,7 +76,7 @@ ptng.buf = (char *)malloc(ptng.size);
 if ((file=fopen("painting", "r"))) { int i=0;
 	while ((c=fgetc(file)) != EOF){
 		c = fgetc(file); switch(c){
-		case '9': ptng.buf[i] = 0;
+		case '9': case '4': ptng.buf[i] = 0;
 			wattron(win, COLOR_PAIR(1));
 			waddch(win, ' '); break;
 		case '1': ptng.buf[i] = 1;
@@ -99,12 +96,12 @@ if ((c=getch())!=ERR){ switch(c){
 case 'q': q = 0; break;
 case 's': file = fopen("painting", "w");
 	for (int i=0; i<ptng.size; i++){ switch(ptng.buf[i]){
-		case 0:	//black
-			fputc(3, file);
-			fprintf(file, "9,1 "); break;
-		case 1: //green
-			fputc(3, file);
-			fprintf(file, "1,9 "); break;
+		case 0: fputc(3, file);	//black
+			if (overall_color == 'g') fprintf(file, "9,1 ");
+			else fprintf(file, "4,1 "); break;
+		case 1: fputc(3, file); //green/red
+			if (overall_color == 'g') fprintf(file, "1,9 ");
+			else fprintf(file, "1,4 "); break;
 		default: break;}
 		if (i && !((i+1)%ptng.w)) fputc('\n', file);}
 	fclose(file); break;
