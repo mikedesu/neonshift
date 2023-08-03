@@ -42,8 +42,4 @@ If the 'painting' file exists upon launch, it is loaded.
 
 ![demo ascii](https://raw.githubusercontent.com/d0pelrh/neonshift/main/demo_ascii.png)
 
-### cheatsheet:
-
-![cheatsheet](https://raw.githubusercontent.com/d0pelrh/neonshift/main/neonshift_cheatsheet.png)
-
 by d0pelrh
