@@ -34,8 +34,8 @@ refresh();
 attron(COLOR_PAIR(10)|A_BOLD);
 mvprintw((ptng.h+2+3+1)/2-6, (ptng.w+2+7+4)/2-25/2,
 		"N   E   O   N   S   H   I   F   T");
-mvprintw((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2,
-		"speedpainting brain interface");
+mvprintw((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-5,
+		"ASCII speedpainting brain interface");
 mvprintw((ptng.h+2+3+1)/2-6+3, (ptng.w+2+7+4)/2-2,
 		"prototype no1");
 mvprintw((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6,
@@ -43,7 +43,8 @@ mvprintw((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6,
 attron(A_UNDERLINE);
 mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6, 'G');
 mvaddch((ptng.h+2+3+1)/2-6+6, (ptng.w+2+7+4)/2-6+16, 'R');
-move((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2+29);
+attroff(A_UNDERLINE);
+move((ptng.h+2+3+1)/2-6+1, (ptng.w+2+7+4)/2-17/2-2+32);
 refresh();
 c = 1; while (c&&(c=getch())){ switch(c){
 	case 'q': title_quit(); break;
@@ -54,6 +55,13 @@ c = 1; while (c&&(c=getch())){ switch(c){
 		init_pair(2, 0, 9); //red
 		c = 0; break;
 	default: break;}}
+
+erase(); attron(COLOR_PAIR(1));
+mvprintw((ptng.h+2+3+1)/2-6+3, (ptng.w+2+7+4)/2-2,
+		"to darkmage"); refresh();
+while ((c=getch())==ERR);
+if (c == 'q') title_quit();
+
 
 win = newwin(ptng.h+2, ptng.w+2, 3, 7);
 wattron(win, COLOR_PAIR(1));
