@@ -1,6 +1,6 @@
 ### NEONSHIFT ASCII
 
-**ASCII speedpainting brain interface**\
+**ASCII Painter for the terminal / Speedpainting brain interface**\
 **Prototype No1**
 
 ## Supports 2 colors!
@@ -41,5 +41,10 @@ If the 'painting' file exists upon launch, it is loaded.
 ### demo:
 
 ![demo ascii](https://raw.githubusercontent.com/d0pelrh/neonshift/main/demo_ascii.png)
+
+### known issues:
+
+- It doesn't actually use the Shift key.
+- hjkl movement isn't desynchronized from sweeping which makes it hard to edit a painting at low fps. (will be fixed in prototype no2)
 
 by d0pelrh
